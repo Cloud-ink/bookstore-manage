@@ -1,0 +1,16 @@
+# 配置tomcat端口号
+server:
+  port: 8090
+
+# 配置数据源
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bookstore
+    username: root
+    password: 123456
+
+# 配置mybatis
+mybatis-plus:
+  type-aliases-package: com.example.demo.pojo
+  mapper-locations: classpath:mapper/*.xml

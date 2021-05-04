@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.ProductMapper">
+    <select id="selectProduct" resultType="Product">
+        select * from product
+    </select>
+
+    <select id="selectProductByProductId" parameterType="int" resultType="Product">
+        select * from product where product_id = #{product_id}
+    </select>
+    <!--  删除商品  -->
+    <delete id="deleteByPrimaryKey" parameterType="int">
+        delete from product where product_id = #{product_id}
+    </delete>
+    <!--  更新商品状态  -->
+    <update id="changeProductStatus" parameterType="Product">
+        update product set product_status = #{product_status}
+        where product_id = #{product_id}
+    </update>
+    <!--  更新分类状态  -->
+    <update id="changeCategoryStatus" parameterType="Category">
+        update category set category_status = #{category_status}
+        where category_id = #{category_id}
+    </update>
+    <select id="getCategoryList" resultType="Category">
+        select * from category
+    </select>
+    <!--  轮播图  -->
+    <select id="getCarouselList" resultType="Carousel">
+        select * from carousel
+    </select>
+    <!--  分类商品列表  -->
+    <select id="getProductListByCategoryName" resultType="Product">
+        select *
+        from product left join category
+        on category.category_id = product.category_id
+        where category_name = #{category_name}
+        limit 3
+    </select>
+    <!--  根据分类获取商品列表  -->
+    <select id="getProductListByCategoryId" resultType="Product">
+        select * from product where category_id = #{category_id}
+    </select>
+    <!--  根据搜索获取商品列表  -->
+    <select id="getProductListBySearch" resultType="Product">
+        select * from product where product_name = #{search}
+    </select>
+</mapper>
