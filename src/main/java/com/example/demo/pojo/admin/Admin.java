@@ -26,4 +26,10 @@ public class Admin implements Serializable {
 
     @TableField(value = "admin_password")
     private String adminPassword;
+
+    @TableField(value = "admin_avatar")
+    private String adminAvatar;
+
+    @TableField(value = "admin_role")
+    private String adminRole;
 }

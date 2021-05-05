@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.demo.mapper.AdminMapper;
 import com.example.demo.pojo.admin.Admin;
 import com.example.demo.pojo.user.User;
@@ -11,16 +12,20 @@ import javax.security.auth.login.LoginException;
 
 @Service
 public class AdminServiceImpl implements AdminService {
+
     @Autowired
     AdminMapper adminMapper;
 
+    //登录
     @Override
-    public Admin verify(Admin admin) {
-        Admin u = new Admin();
-        u.setAdminName(admin.getAdminName());
-        u.setAdminPassword(admin.getAdminPassword());
-        return u;
+    public Admin verity(Admin adminVo) {
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("admin_name", adminVo.getAdminName());
+        queryWrapper.eq("admin_password", adminVo.getAdminPassword());
+        Admin admin = adminMapper.selectOne(queryWrapper);
+        return admin;
     }
+
     //登录
     @Override
     public User findUserByUserName(String username) {

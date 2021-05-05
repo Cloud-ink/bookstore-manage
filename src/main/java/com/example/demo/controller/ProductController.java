@@ -58,14 +58,14 @@ public class ProductController {
     public Result changeProductStatus(@RequestParam("product_id") int product_id,
                                       @RequestParam("product_status") String status){
         Result res = new Result();
-        Product pro = new Product();
-        pro.setProduct_id(product_id);
-        pro.setProduct_status(status);
-        System.out.println(pro.getProduct_status());
-        productService.changeProductStatus(pro);
-        res.setData(pro);
-        res.setCode(Constants.STATUS_OK);
-        res.setMessage(Constants.MESSAGE_OK);
+//        Product pro = new Product();
+//        pro.setProduct_id(product_id);
+//        pro.setProduct_status(status);
+//        System.out.println(pro.getProduct_status());
+//        productService.changeProductStatus(pro);
+//        res.setData(pro);
+//        res.setCode(Constants.STATUS_OK);
+//        res.setMessage(Constants.MESSAGE_OK);
         return res;
     }
 

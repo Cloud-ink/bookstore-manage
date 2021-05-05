@@ -7,7 +7,8 @@ import org.springframework.stereotype.Service;
 @Service
 public interface AdminService {
     //如果验证成功，返回user对象，失败返回null或异常
-    public Admin verify(Admin admin);
+    Admin verity(Admin admin);
     //根据用户名查找
     User findUserByUserName(String username);
+
 }

@@ -5,21 +5,43 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.demo.pojo.admin.vo.JwtInfo;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.util.StringUtils;
 
+import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.DatatypeConverter;
+import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 
 public class JwtUtil {
-    public static final String TOKEN_LOGIN_NAME="loginName";
-    public static final String TOKEN_LOGIN_ID="userId";
-    public static final String TOKEN_SUCCESS="success:";
-    public static final String TOKEN_FAIL="fail:";
 
-    private static final long EXPIRE_TIME=24*60*60*1000;
+    public static final String TOKEN_LOGIN_NAME = "loginName";
+    public static final String TOKEN_LOGIN_ID = "id";
+    public static final String TOKEN_SUCCESS = "success:";
+    public static final String TOKEN_FAIL = "fail:";
+
+    private static final long EXPIRE_TIME = 30*60*1000;
 
     private static final String TOKEN_SECRET="j0ijsdfjlsjfljfl15135313135";
 
-    public static String sign(String username,String userId){
+    //加密key
+    public static Key getKetInstance(){
+        //加密方式
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+        //处理原始key
+        byte[] bytes = DatatypeConverter.parseBase64Binary(TOKEN_SECRET);
+        //返回加密后的key
+        return new SecretKeySpec(bytes,signatureAlgorithm.getJcaName());
+    }
+
+    //构建token
+    public static String getToken(JwtInfo jwtInfo){
         //过期时间
         Date date = new Date(System.currentTimeMillis()+EXPIRE_TIME);
         //私钥及加密算法
@@ -29,28 +51,64 @@ public class JwtUtil {
         header.put("typ","JWT");
         header.put("alg","HS256");
         //附带username和userid生成签名
-        return JWT.create().withHeader(header)
-                .withClaim(TOKEN_LOGIN_NAME,username)
-                .withClaim(TOKEN_LOGIN_ID,userId)
-                .withExpiresAt(date)
-                .sign(algorithm);
+        String JwtToken = Jwts.builder()
+                .setHeader(header)
+                .setSubject("manage")
+                .setIssuedAt(new Date())
+                .setExpiration(date)
+                .claim("id", jwtInfo.getId())
+                .claim("name", jwtInfo.getAdminName())
+                .claim("avatar", jwtInfo.getAdminAvatar())
+                .claim("role",jwtInfo.getAdminRole())
+                .signWith(SignatureAlgorithm.HS256, getKetInstance())
+                .compact();
+
+        return JwtToken;
     }
 
-    public static String verity(String token){
-        String result = TOKEN_SUCCESS;
+    //判断token是否存在有效
+    public static boolean checkToken(String token) {
+        if(StringUtils.isEmpty(token)) return false;
         try {
-            Algorithm algorithm = Algorithm.HMAC256(TOKEN_SECRET);
-            JWTVerifier verifier = JWT.require(algorithm).build();
-            DecodedJWT jwt = verifier.verify(token);
-            result += jwt.getClaims().get(TOKEN_LOGIN_NAME).asString();
-            return result;
-        } catch (IllegalArgumentException e){
-            return TOKEN_FAIL+e.getMessage();
-        } catch (JWTVerificationException e){
-            return TOKEN_FAIL+e.getMessage();
-        } catch (Exception e){
-            return TOKEN_FAIL+e.getMessage();
+            Jwts.parser().setSigningKey(getKetInstance()).parseClaimsJws(token);
+        } catch (Exception e) {
+            return false;
         }
+        return true;
+    }
+
+    //检验重载，从request获取
+    public static boolean checkToken(HttpServletRequest request){
+        try{
+            String token = request.getHeader("token");
+            if(StringUtils.isEmpty(token)) return false;
+            Jwts.parser().setSigningKey(getKetInstance()).parseClaimsJws(token);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    //解析jwt
+    public static JwtInfo getMemberIdByJwtToken(HttpServletRequest request){
+        String token = request.getHeader("token");
+        if(StringUtils.isEmpty(token)) return null;
+
+        Jws<Claims> claimsJws = Jwts.parser()
+                .setSigningKey(getKetInstance())
+                .parseClaimsJws(token);
+
+        Claims claims = claimsJws.getBody();
+
+        JwtInfo jwtInfo = new JwtInfo(
+                Integer.parseInt(claims.get("id").toString()),
+                claims.get("name").toString(),
+                claims.get("avatar").toString(),
+                claims.get("role").toString());
+
+        System.out.println(jwtInfo.getId());
+
+        return jwtInfo;
 
     }
 
