@@ -1,4 +1,4 @@
-package com.example.demo.utils;
+package com.example.demo.util;
 
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;

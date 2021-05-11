@@ -1,7 +1,9 @@
 package com.example.demo.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.demo.mapper.AdminMapper;
+import com.example.demo.mapper.UserMapper;
 import com.example.demo.pojo.admin.Admin;
 import com.example.demo.pojo.user.User;
 import com.example.demo.service.AdminService;
@@ -11,7 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.security.auth.login.LoginException;
 
 @Service
-public class AdminServiceImpl implements AdminService {
+public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements AdminService{
 
     @Autowired
     AdminMapper adminMapper;
@@ -26,11 +28,17 @@ public class AdminServiceImpl implements AdminService {
         return admin;
     }
 
-    //登录
     @Override
-    public User findUserByUserName(String username) {
-        User user = adminMapper.findUserByUserName(username);
-        return user;
+    public boolean findAdmin(Admin adminVo) {
+
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("admin_name", adminVo.getAdminName());
+        queryWrapper.eq("admin_password", adminVo.getAdminPassword());
+        int result = adminMapper.selectCount(queryWrapper);
+
+        if(result == 0) return false;
+
+        return true;
     }
 
     //验证用户名和密码是否符合规范

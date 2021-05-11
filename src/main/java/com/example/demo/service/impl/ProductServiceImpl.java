@@ -1,133 +1,88 @@
 package com.example.demo.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.demo.mapper.ProductMapper;
 import com.example.demo.pojo.font.Carousel;
 import com.example.demo.pojo.font.gategory.Category;
-import com.example.demo.pojo.utils.VoPage;
+import com.example.demo.pojo.product.vo.ProductQueryVo;
+import com.example.demo.pojo.product.vo.ProductVo;
+import com.example.demo.util.VoPage;
 import com.example.demo.pojo.product.Product;
 import com.example.demo.service.ProductService;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
-public class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> implements ProductService {
     @Autowired
     private ProductMapper productMapper;
 
     @Override
-    public VoPage searchProduct(int pageNo, int limit, String idSorted) {
-        VoPage page = new VoPage();
-        List<Product> list = new ArrayList<>();
-        list.addAll(productMapper.selectProduct());
-
-        int total = productMapper.selectProduct().size();
-        page.setItems(list);
-        page.setTotal(total);
-//        for(int i = 0;i <= productMapper.selectProduct().size();i++){
-//            list.add()
-//        }
-        return page;
+    public List<Product> getProductList() {
+        return null;
     }
 
-    //前台
-    //获取所有商品
+    @ApiOperation("多表分页查询")
     @Override
-    public VoPage searchProduct(int pageNo, int limit) {
-        VoPage page = new VoPage();
-        List<Product> list = new ArrayList<>();
-        list.addAll(productMapper.selectProduct());
-        int total = productMapper.selectProduct().size();
-        page.setItems(list);
-        page.setTotal(total);
-        return page;
-    }
+    public IPage<ProductVo> selectPage(int page, int limit, ProductQueryVo productQueryVo) {
+        //组装查询条件
+        QueryWrapper<Product> queryWrapper = new QueryWrapper<>();
+        //多表联查一定要加前缀
+        queryWrapper.orderByDesc("p.product_createTime");
 
-    //获取商品分类
-    @Override
-    public List<Category> getCategoryList() {
-        return productMapper.getCategoryList();
-    }
+        String categoryName = productQueryVo.getCategoryName();
+        String productName = productQueryVo.getProductName();
+        String productSubtitle = productQueryVo.getProductSubtitle();
+        String productStatus = productQueryVo.getProductStatus();
 
-    //更新商品状态
-    @Override
-    public int changeCategoryStatus(Category category) {
-        return productMapper.changeCategoryStatus(category);
-    }
+        if (!StringUtils.isEmpty(categoryName)) {
+            queryWrapper.like("c.category_name", categoryName);
+        }
 
-    //删除商品
-    @Override
-    public int deleteByPrimaryKey(int product_id) {
-        return productMapper.deleteByPrimaryKey(product_id);
-    }
+        if (!StringUtils.isEmpty(productName)) {
+            queryWrapper.like("p.product_name", productName);
+        }
 
-    //更新商品状态
-    @Override
-    public int changeProductStatus(Product product) {
-        return productMapper.changeProductStatus(product);
+        if (!StringUtils.isEmpty(productSubtitle)) {
+            queryWrapper.like("p.product_subtitle", productSubtitle);
+        }
+
+        if (!StringUtils.isEmpty(productStatus)) {
+            queryWrapper.like("p.product_status", productStatus);
+        }
+
+        //组装分页
+        Page<ProductVo> pageParam = new Page<>(page, limit);
+
+        //执行查询,只要有page类的参数，自动解析page，limit并加到sql中去
+        //只需要在mapper层传入组装好的分页组件即可，其他的sql分页条件由mp自动完成
+        List<ProductVo> records = baseMapper.selectPageByProductQueryVo(pageParam, queryWrapper);
+
+        return pageParam .setRecords(records);
     }
 
     @Override
-    public Product getProductByProductId(int product_id) {
-        return productMapper.selectProductByProductId(product_id);
+    public int deleteById(int id) {
+        return 0;
     }
 
     @Override
-    public List<Carousel> getCarouselList() {
-        return productMapper.getCarouselList();
+    public boolean save(ProductVo userVo) {
+        return false;
     }
 
     @Override
-    public List<Product> getProductListByCategoryName(String category_name) {
-        return productMapper.getProductListByCategoryName(category_name);
+    public List<Map<String, Object>> selectNameByKey(String key) {
+        return null;
     }
-
-    @Override
-    public VoPage getProductListByCategoryId(int category_id) {
-        VoPage page = new VoPage();
-        List<Product> list = new ArrayList<>();
-        list.addAll(productMapper.getProductListByCategoryId(category_id));
-        int total = productMapper.getProductListByCategoryId(category_id).size();
-        page.setItems(list);
-        page.setTotal(total);
-        return page;
-    }
-
-    @Override
-    public VoPage getProductListBySearch(String search) {
-        VoPage page = new VoPage();
-        List<Product> list = new ArrayList<>();
-        list.addAll(productMapper.getProductListBySearch(search));
-        int total = productMapper.getProductListBySearch(search).size();
-        page.setItems(list);
-        page.setTotal(total);
-        return page;
-    }
-
-//    @Override
-//    public VoPage searchEmployees(int pageNo, int limit, String idSorted) {
-//        VoPage page = null;
-//
-//        List<VoEmployee> userList = new ArrayList<>();
-//        userList.addAll(this.idMaps.values());
-//        if(idSorted != null && idSorted.startsWith("-")){
-//            Collections.reverse(userList);
-//        }
-//        int total = userList.size();
-//        int maxPageNo = userList.size()%limit == 0? userList.size()/limit:userList.size()/limit + 1;
-//        if(pageNo>maxPageNo){
-//            pageNo = maxPageNo;
-//        }
-//        int beginIndex = (pageNo-1)*limit;
-//        int endIndex = pageNo*limit;
-//        if(endIndex>total){
-//            endIndex = total;
-//        }
-//
-//        page = new VoPage(userList.subList(beginIndex, endIndex), total);
-//
-//        return page;
-//    }
 }

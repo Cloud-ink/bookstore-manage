@@ -8,9 +8,7 @@ import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
-
-import static com.example.demo.utils.JwtUtil.*;
+import static com.example.demo.util.JwtUtil.*;
 
 @SpringBootTest
 public class TokenTest {

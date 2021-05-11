@@ -1,28 +1,20 @@
 package com.example.demo.controller;
 
-import com.example.demo.pojo.font.gategory.Category;
-import com.example.demo.pojo.font.gategory.VoCategory;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.demo.pojo.product.Product;
-import com.example.demo.pojo.user.VoEmployee;
-import com.example.demo.pojo.utils.VoPage;
-import com.example.demo.res.Res;
-import com.example.demo.res.ResCategory;
-import com.example.demo.res.Result;
-import com.example.demo.service.EmployeeService;
+import com.example.demo.pojo.product.vo.ProductQueryVo;
+import com.example.demo.pojo.product.vo.ProductVo;
+import com.example.demo.pojo.user.User;
+import com.example.demo.pojo.user.vo.UserQueryVo;
+import com.example.demo.pojo.user.vo.UserSaveVo;
+import com.example.demo.res.R;
 import com.example.demo.service.ProductService;
-import com.example.demo.utils.Constants;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import org.json.JSONException;
-import org.json.JSONObject;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
@@ -31,42 +23,86 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping("/list")
-    public Result getlist(@RequestParam("page") int pageNo,
-                          @RequestParam("limit") int limit,
-                          @RequestParam("sort") String idSort){
-        Result res = null;
-        VoPage page = productService.searchProduct(pageNo, limit, idSort);
-        res = new Result(Constants.STATUS_OK, Constants.MESSAGE_OK, page);
-        return res;
+    @ApiOperation("分页查询")
+    @GetMapping("/list/{page}/{limit}")
+    public R queryUser(@PathVariable("page") int page,
+                       @PathVariable("limit") int limit,
+                       @ApiParam("查询条件") ProductQueryVo productQueryVo) {
+
+        IPage<ProductVo> pageModel = productService.selectPage(page, limit, productQueryVo);
+        List<ProductVo> records = pageModel.getRecords();
+        long total = pageModel.getTotal();
+        if (total == 0) {
+            return R.ok().message("未找到商品");
+        }
+        return R.ok().data("total", total).data("items", records);
     }
 
-    //删除商品
-    @PostMapping("/delete")
-    public Result deleteProduct(@RequestParam("product_id") int product_id){
-        Result res = new Result();
-        Product pro = new Product();
-        productService.deleteByPrimaryKey(product_id);
-        res.setData(pro);
-        res.setCode(Constants.STATUS_OK);
-        res.setMessage(Constants.MESSAGE_OK);
-        return res;
+    @ApiOperation("删除用户")
+    @DeleteMapping("/delete/{id}")
+    public R deleteUser(@PathVariable("id") int id) {
+        int result = productService.deleteById(id);
+        if (result != 0) {
+            return R.ok().message("删除用户成功");
+        } else {
+            return R.ok().message("删除用户失败");
+        }
     }
 
-    //更新商品状态
-    @PostMapping("/changeStatus")
-    public Result changeProductStatus(@RequestParam("product_id") int product_id,
-                                      @RequestParam("product_status") String status){
-        Result res = new Result();
-//        Product pro = new Product();
-//        pro.setProduct_id(product_id);
-//        pro.setProduct_status(status);
-//        System.out.println(pro.getProduct_status());
-//        productService.changeProductStatus(pro);
-//        res.setData(pro);
-//        res.setCode(Constants.STATUS_OK);
-//        res.setMessage(Constants.MESSAGE_OK);
-        return res;
+    @ApiOperation("添加")
+    @PostMapping("/save")
+    public R addUser(@ApiParam(value = "用户对象", required = true)
+                     @RequestBody ProductQueryVo productQueryVo) {
+        //productService.save(productQueryVo);
+        return R.ok().message("保存成功");
+    }
+
+
+    @ApiOperation("获取用户")
+    @GetMapping("/get/{id}")
+    public R getUser(@ApiParam(value = "用户id", required = true)
+                     @PathVariable int id) {
+        Product product = productService.getById(id);
+        if (product.equals(null)) {
+            return R.ok().message("未查找到用户");
+        } else {
+            return R.ok().message("查找成功").data("item", product);
+        }
+    }
+
+    @ApiOperation("更新用户信息")
+    @PutMapping("/update")
+    public R updateUser(@ApiParam(value = "用户", required = true)
+                        @RequestBody Product product) {
+        boolean result = productService.updateById(product);
+        if (result) {
+            return R.ok().message("查找成功").data("item", product);
+        } else {
+            return R.ok().message("未查找到用户");
+        }
+    }
+
+    @ApiOperation("根据id列表删除")
+    @DeleteMapping("/batchDelete")
+    public R batchDelete(
+            @ApiParam(value = "批量删除", required = true)
+            @RequestBody List<Integer> idList) {
+        boolean result = productService.removeByIds(idList);
+        if (result) {
+            return R.ok().message("批量删除用户成功");
+        } else {
+            return R.ok().message("批量删除用户失败");
+        }
+    }
+
+    @ApiOperation("自动补全")
+    @GetMapping("/list/name/{key}")
+    public R selectNameListByKey(
+            @ApiParam(value = "关键字", required = true)
+            @PathVariable String key) {
+        List<Map<String, Object>> nameList = productService.selectNameByKey(key);
+
+        return R.ok().data("nameList", nameList);
     }
 
 }

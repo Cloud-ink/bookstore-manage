@@ -1,10 +1,6 @@
-package com.example.demo.utils;
+package com.example.demo.util;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.demo.pojo.admin.vo.JwtInfo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -81,6 +77,7 @@ public class JwtUtil {
     public static boolean checkToken(HttpServletRequest request){
         try{
             String token = request.getHeader("token");
+            System.out.println(token);
             if(StringUtils.isEmpty(token)) return false;
             Jwts.parser().setSigningKey(getKetInstance()).parseClaimsJws(token);
         } catch (Exception e) {
@@ -92,19 +89,29 @@ public class JwtUtil {
     //解析jwt
     public static JwtInfo getMemberIdByJwtToken(HttpServletRequest request){
         String token = request.getHeader("token");
+
         if(StringUtils.isEmpty(token)) return null;
+
+        System.out.println(StringUtils.isEmpty(token));
 
         Jws<Claims> claimsJws = Jwts.parser()
                 .setSigningKey(getKetInstance())
-                .parseClaimsJws(token);
-
+                .parseClaimsJws(token);//解析
         Claims claims = claimsJws.getBody();
 
+        System.out.println("yi");
+
+        System.out.println(Integer.parseInt(claims.get("id").toString()));
+        System.out.println(claims.get("name").toString());
+        System.out.println(claims.get("avatar").toString());
+        System.out.println(claims.get("role").toString());
         JwtInfo jwtInfo = new JwtInfo(
                 Integer.parseInt(claims.get("id").toString()),
                 claims.get("name").toString(),
                 claims.get("avatar").toString(),
                 claims.get("role").toString());
+
+        System.out.println("er");
 
         System.out.println(jwtInfo.getId());
 

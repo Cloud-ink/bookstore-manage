@@ -1,18 +1,11 @@
 package com.example.demo.service.impl;
 
 import com.alipay.api.AlipayApiException;
-import com.alipay.api.AlipayClient;
-import com.alipay.api.DefaultAlipayClient;
-import com.alipay.api.domain.AlipayTradeWapPayModel;
-import com.alipay.api.request.AlipayTradePagePayRequest;
-import com.example.demo.config.AlipayConfig;
 import com.example.demo.pojo.font.AlipayBean;
-import com.example.demo.pojo.utils.AlipayUtil;
+import com.example.demo.util.AlipayUtil;
 import com.example.demo.service.AlipayService;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.util.Map;
 @Service(value = "alipayOrderService")
 public class AlipayServiceImpl implements AlipayService {
 //    @Override

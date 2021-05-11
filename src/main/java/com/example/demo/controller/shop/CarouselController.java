@@ -1,7 +1,6 @@
 package com.example.demo.controller.shop;
 
 import com.example.demo.pojo.font.Carousel;
-import com.example.demo.res.Result;
 import com.example.demo.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,16 +20,16 @@ public class CarouselController {
     @Autowired
     ProductService productService;
 
-    @PostMapping("/api/resources/carousel")
-    public Result getCarousel(){
-        Result res = new Result();
-        List<Carousel> list = new ArrayList<>();
-        list.addAll(productService.getCarouselList());
-        res.setCode(20000);
-        res.setMessage("获取成功");
-        res.setData(list);
-        return res;
-    }
+//    @PostMapping("/api/resources/carousel")
+//    public Result getCarousel(){
+//        Result res = new Result();
+//        List<Carousel> list = new ArrayList<>();
+//        list.addAll(productService.getCarouselList());
+//        res.setCode(20000);
+//        res.setMessage("获取成功");
+//        res.setData(list);
+//        return res;
+//}
 
     @RequestMapping("/getCoroulsel")
     public void getImg2(HttpServletRequest request, HttpServletResponse response)

@@ -11,6 +11,8 @@ import lombok.ToString;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,6 +32,22 @@ public class Admin implements Serializable {
     @TableField(value = "admin_avatar")
     private String adminAvatar;
 
+    @TableField(value = "admin_phone")
+    private String adminPhone;
+
+    @TableField(value = "enabled")
+    private boolean enabled;
+
+    @TableField(value = "type")
+    private String type;
+
     @TableField(value = "admin_role")
     private String adminRole;
+
+
+    @TableField(value = "create_time")
+    private Timestamp createTime;
+
+    @TableField(value = "update_time")
+    private Timestamp updateTime;
 }

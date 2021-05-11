@@ -1,33 +1,30 @@
 package com.example.demo.service;
 
-import com.example.demo.pojo.font.Carousel;
-import com.example.demo.pojo.font.gategory.Category;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.demo.pojo.product.Product;
-import com.example.demo.pojo.utils.VoPage;
+import com.example.demo.pojo.product.vo.ProductQueryVo;
+import com.example.demo.pojo.product.vo.ProductVo;
+import com.example.demo.pojo.user.User;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import java.util.List;
+import java.util.Map;
 
-public interface ProductService {
-    public VoPage searchProduct(int pageNo, int limit, String idSorted);
-    //前台
-    //查询所有商品
-    VoPage searchProduct(int pageNo, int limit);
-    //查询商品分类列表
-    List<Category> getCategoryList();
-    //更新商品状态
-    int changeCategoryStatus(Category category);
-    //删除商品
-    int deleteByPrimaryKey(int product_id);
-    //更新商品状态
-    int changeProductStatus(Product product);
+public interface ProductService extends IService<Product> {
+    @ApiOperation("获取列表")
+    List<Product> getProductList();
 
-    Product getProductByProductId(int product_id);
-    //获取轮播图列表
-    List<Carousel> getCarouselList();
-    //根据分类名获取商品
-    List<Product> getProductListByCategoryName(String category_name);
-    //根据分类id获取商品
-    VoPage getProductListByCategoryId(int category_id);
-    //根据搜索获取商品
-    VoPage getProductListBySearch(String search);
+    @ApiOperation("分页")
+    IPage<ProductVo> selectPage(int page, int limit, ProductQueryVo productQueryVo);
+
+    @ApiOperation("删除")
+    int deleteById(int id);
+
+    @ApiOperation("添加")
+    boolean save(ProductVo userVo);
+
+    List<Map<String, Object>> selectNameByKey(String key);
 }

@@ -1,6 +1,5 @@
-package com.example.demo.pojo.utils;
+package com.example.demo.util;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServletRequest;
