@@ -40,13 +40,14 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         //多表联查一定要加前缀
         queryWrapper.orderByDesc("p.product_createTime");
 
-        String categoryName = productQueryVo.getCategoryName();
+        long id = productQueryVo.getId();
+        Integer categoryId = productQueryVo.getCategoryId();
         String productName = productQueryVo.getProductName();
         String productSubtitle = productQueryVo.getProductSubtitle();
         String productStatus = productQueryVo.getProductStatus();
 
-        if (!StringUtils.isEmpty(categoryName)) {
-            queryWrapper.like("c.category_name", categoryName);
+        if (!StringUtils.isEmpty(categoryId)) {
+            queryWrapper.like("p.category_id", categoryId);
         }
 
         if (!StringUtils.isEmpty(productName)) {
@@ -68,7 +69,8 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         //只需要在mapper层传入组装好的分页组件即可，其他的sql分页条件由mp自动完成
         List<ProductVo> records = baseMapper.selectPageByProductQueryVo(pageParam, queryWrapper);
 
-        return pageParam .setRecords(records);
+        System.out.println(records.size());
+        return pageParam.setRecords(records);
     }
 
     @Override

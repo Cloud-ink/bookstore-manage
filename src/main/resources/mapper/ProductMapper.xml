@@ -8,6 +8,7 @@
     <sql id="columns">
         p.id,
         p.product_name AS productName,
+        p.product_image AS productImage,
         p.product_subtitle AS productSubtitle,
         p.product_detail AS productDetail,
         p.product_price AS productPrice,
@@ -17,8 +18,7 @@
         p.product_sale_point AS productSalePoint,
         p.product_createTime AS productCreateTime,
         p.product_updateTime AS productUpdateTime,
-
-        c.category_name AS categoryName
+        p.category_id AS categoryId
 
     </sql>
 

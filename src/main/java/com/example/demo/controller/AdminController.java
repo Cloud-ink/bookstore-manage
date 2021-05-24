@@ -11,9 +11,12 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 @ApiModel("管理员")
@@ -32,19 +35,28 @@ public class AdminController {
             @ApiParam(value = "管理员对象", required = true)
             @RequestBody Admin adminVo) {
 
-            Admin admin = adminService.verity(adminVo);
-            boolean result = adminService.findAdmin(adminVo);
-            if (result) {
-                JwtInfo jwtInfo = new JwtInfo();
-                jwtInfo.setId(admin.getId());
-                jwtInfo.setAdminName(admin.getAdminName());
-                jwtInfo.setAdminAvatar(admin.getAdminAvatar());
+        Admin admin = adminService.verity(adminVo);
+        boolean result = adminService.findAdmin(adminVo);
+        Set<SysRole> roleSet = new HashSet<SysRole>();
+        roleSet = adminService.selectRolesById(admin.getId());
 
-                String token = JwtUtil.getToken(jwtInfo);
-                return R.ok().data("token", token).message("登录成功");
-            } else {
-                return R.ok().message("未找到用户");
-            }
+        Set<Long> roleIdSole = adminService.selectRolesId(roleSet);
+
+        if(!CollectionUtils.isEmpty(roleSet)) {
+
+        }
+        if (result) {
+            JwtInfo jwtInfo = new JwtInfo();
+            jwtInfo.setId(admin.getId());
+            jwtInfo.setAdminName(admin.getAdminName());
+            jwtInfo.setAdminAvatar(admin.getAdminAvatar());
+            jwtInfo.setRoles(roleSet);
+
+            String token = JwtUtil.getToken(jwtInfo);
+            return R.ok().data("token", token).message("登录成功");
+        } else {
+            return R.ok().message("未找到用户");
+        }
 
     }
 
@@ -52,11 +64,11 @@ public class AdminController {
     @GetMapping("/info")
     public R getInfo(HttpServletRequest request) {
         boolean result = JwtUtil.checkToken(request);
-        if(result) {
+        if (result) {
             JwtInfo jwtInfo = JwtUtil.getMemberIdByJwtToken(request);
-            Set<SysRole> roles = sysRoleService.
+            //Set<SysRole> roles = sysRoleService.
             return R.ok().data("userInfo", jwtInfo);
-        }else {
+        } else {
             return R.ok().message("token为空");
         }
     }

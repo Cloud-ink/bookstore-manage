@@ -40,4 +40,11 @@
     <delete id="deleteById" parameterType="int">
         delete from user where user_id=#{user_id}
     </delete>
+
+    <select id="selectRolesById" resultType="SysRole">
+        SELECT s.id,s.code,s.name
+        FROM admin a INNER JOIN sys_role_admin r ON r.admin_id = a.id
+        INNER JOIN sys_role s ON r.role_id = s.id
+        WHERE a.id = #{id}
+    </select>
 </mapper>

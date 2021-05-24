@@ -15,7 +15,8 @@ public class ProductVo implements Serializable{
 
     private long id;
     private String productName;
-    private String categoryName;
+    private String productImage;
+    private int categoryId;
     private String productSubtitle;
     private String productDetail;
     private double productPrice;

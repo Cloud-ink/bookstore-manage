@@ -18,7 +18,8 @@ public class JwtInfo implements Serializable {
     private Integer id;
     private String adminName;
     private String adminAvatar;
-    private Set<SysRole> adminRole;
+
+    private Set<SysRole> roles;
     private Set<String> permissions;
 
 }

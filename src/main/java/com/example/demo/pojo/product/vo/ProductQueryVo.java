@@ -13,7 +13,7 @@ public class ProductQueryVo implements Serializable{
     private static final long serialVersionUID = 1L;
 
     private long id;
-    private String categoryName;
+    private Integer categoryId;
     private String productName;
     private String productSubtitle;
     private String productStatus;

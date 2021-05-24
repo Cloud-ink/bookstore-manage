@@ -5,12 +5,14 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.demo.mapper.AdminMapper;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.pojo.admin.Admin;
+import com.example.demo.pojo.system.SysRole;
 import com.example.demo.pojo.user.User;
 import com.example.demo.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.LoginException;
+import java.util.Set;
 
 @Service
 public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements AdminService{
@@ -39,6 +41,23 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         if(result == 0) return false;
 
         return true;
+    }
+
+    @Override
+    public Set<SysRole> selectRolesById(int id) {
+
+        return adminMapper.selectRolesById(id);
+    }
+
+    @Override
+    public Set<String> selectPermission(int id) {
+        return null;
+    }
+
+    @Override
+    public Set<Long> selectRolesId(Set<SysRole> roleSet) {
+
+        return null;
     }
 
     //验证用户名和密码是否符合规范

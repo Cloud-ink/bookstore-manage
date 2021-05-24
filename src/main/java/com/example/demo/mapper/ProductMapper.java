@@ -19,7 +19,7 @@ public interface ProductMapper extends BaseMapper<Product> {
 
     List<ProductVo> selectPageByProductQueryVo(
             Page<ProductVo> pageParam,
-            //mp自动组装querywrapper，@Param(Constants.WRAPPER)和xml中${ew.customSqlSegment}对应
+            //mp自动组装queryWrapper，@Param(Constants.WRAPPER)和xml中${ew.customSqlSegment}对应
             @Param(Constants.WRAPPER)QueryWrapper<Product> queryWrapper
             );
 }

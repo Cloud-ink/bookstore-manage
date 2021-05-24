@@ -1,44 +1,51 @@
 package com.example.demo;
 
 import com.example.demo.pojo.admin.vo.JwtInfo;
+import com.example.demo.pojo.system.SysRole;
+import com.example.demo.service.AdminService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.StringUtils;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.example.demo.util.JwtUtil.*;
 
 @SpringBootTest
 public class TokenTest {
+    @Autowired
+    AdminService adminService;
+
     @Test
     public void Token(){
-        JwtInfo jwtInfo = new JwtInfo(1, "lili", "tupian", "quanxian");
-        String token = getToken(jwtInfo);
-        System.out.println(token);
-        JwtInfo info = getMemberId(token);
-        System.out.println(info.getId()+"/"+info.getAdminName());
+        Set<SysRole> roleSet = new HashSet<SysRole>();
+        roleSet = adminService.selectRolesById(1);
+        System.out.println(roleSet);
     }
 
-    public static JwtInfo getMemberId(String token){
-        if(StringUtils.isEmpty(token)) return null;
-
-        Jws<Claims> claimsJws = Jwts.parser()
-                .setSigningKey(getKetInstance())
-                .parseClaimsJws(token);//解析
-        Claims claims = claimsJws.getBody();
-
-        JwtInfo jwtInfo = new JwtInfo(
-                Integer.parseInt(claims.get("id").toString()),
-                claims.get("name").toString(),
-                claims.get("avatar").toString(),
-                claims.get("role").toString());
-
-        System.out.println(jwtInfo.getId());
-
-        return jwtInfo;
-
-    }
+//    public static JwtInfo getMemberId(String token){
+//        if(StringUtils.isEmpty(token)) return null;
+//
+//        Jws<Claims> claimsJws = Jwts.parser()
+//                .setSigningKey(getKetInstance())
+//                .parseClaimsJws(token);//解析
+//        Claims claims = claimsJws.getBody();
+//
+//        JwtInfo jwtInfo = new JwtInfo(
+//                Integer.parseInt(claims.get("id").toString()),
+//                claims.get("name").toString(),
+//                claims.get("avatar").toString(),
+//                claims.get("role").toString());
+//
+//        System.out.println(jwtInfo.getId());
+//
+//        return jwtInfo;
+//
+//    }
 
 }

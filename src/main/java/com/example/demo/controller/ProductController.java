@@ -38,7 +38,7 @@ public class ProductController {
         return R.ok().data("total", total).data("items", records);
     }
 
-    @ApiOperation("删除用户")
+    @ApiOperation("删除商品")
     @DeleteMapping("/delete/{id}")
     public R deleteUser(@PathVariable("id") int id) {
         int result = productService.deleteById(id);
