@@ -35,7 +35,6 @@
     </select>
 
 
-
     <select id="selectProduct" resultType="Product">
         select * from product
     </select>

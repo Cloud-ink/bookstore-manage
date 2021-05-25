@@ -5,10 +5,12 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.example.demo.pojo.admin.vo.JwtInfo;
 import com.example.demo.pojo.font.Collect;
 import com.example.demo.pojo.system.SysRole;
+import com.example.demo.service.AdminService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -16,16 +18,9 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 public class JwtUtil {
-
-    public static final String TOKEN_LOGIN_NAME = "loginName";
-    public static final String TOKEN_LOGIN_ID = "id";
-    public static final String TOKEN_SUCCESS = "success:";
-    public static final String TOKEN_FAIL = "fail:";
 
     private static final long EXPIRE_TIME = 30 * 60 * 1000;
 
@@ -98,28 +93,18 @@ public class JwtUtil {
 
         if (StringUtils.isEmpty(token)) return null;
 
-        System.out.println(StringUtils.isEmpty(token));
-
         Jws<Claims> claimsJws = Jwts.parser()
                 .setSigningKey(getKetInstance())
                 .parseClaimsJws(token);//解析
+
         Claims claims = claimsJws.getBody();
 
-        String avatar = (String) claims.get("avatar");
-        Object obj = claims.get("roles");
-        Set<SysRole> set = (Set<SysRole>) obj;
-        Object objP = claims.get("permissions");
-        Set<String> setP = (Set<String>) objP;
         JwtInfo jwtInfo = new JwtInfo(
                 Integer.parseInt(claims.get("id").toString()),
                 claims.get("name").toString(),
                 claims.get("avatar").toString(),
-                set,
-                setP);
-
-        System.out.println(jwtInfo.getId());
-        System.out.println(jwtInfo.getRoles());
-        System.out.println(jwtInfo.getPermissions());
+                (List<SysRole>) claims.get("roles"),
+                (List<String>) claims.get("permissions"));
 
         return jwtInfo;
 

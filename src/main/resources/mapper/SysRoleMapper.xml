@@ -3,41 +3,16 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.SysRoleMapper">
-<!--    <select id="selectUser" resultType="User">-->
-<!--        select * from user-->
-<!--    </select>-->
-<!--    &lt;!&ndash;    注册&ndash;&gt;-->
-<!--    <insert id="register" parameterType="User">-->
-<!--        insert into user (user_name,user_password)-->
-<!--        values(#{user_name},#{user_password})-->
-<!--    </insert>-->
 
-<!--    <select id="findUserName" resultType="boolean">-->
-<!--        select count(user_id)-->
-<!--        from user where user_name = #{username}-->
-<!--    </select>-->
-<!--    &lt;!&ndash;  根据用户名查找  &ndash;&gt;-->
-<!--    <select id="findUserByUserName" resultType="User">-->
-<!--        select * from user-->
-<!--        where user_name = #{username}-->
-<!--    </select>-->
-<!--    <select id="selectUserById" resultType="User">-->
-<!--        select * from user where user_id=#{title}-->
-<!--    </select>-->
+    <select id="selectPermission" resultType="String">
+        SELECT sp.permission
+        FROM sys_permission sp
+        INNER JOIN sys_role_permission srp ON sp.id = srp.permission_id
+        WHERE srp.role_id in
+        <foreach collection="idList" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
 
-<!--    <insert id="addUser" parameterType="User">-->
-<!--        insert into user (user_id,user_name,user_email,user_phone,user_gender,user_address)-->
-<!--        values(#{user_id},#{user_name},#{user_email},#{user_phone},#{user_gender},#{user_address})-->
-<!--    </insert>-->
+    </select>
 
-<!--    <update id="updateUserById" parameterType="User">-->
-<!--        update user set user_id = #{user_id},user_name = #{user_name},-->
-<!--        user_email = #{user_email},user_phone = #{user_phone},-->
-<!--        user_gender = #{user_gender},user_address = #{user_address}-->
-<!--        where user_id = #{user_id}-->
-<!--    </update>-->
-
-<!--    <delete id="deleteById" parameterType="int">-->
-<!--        delete from user where user_id=#{user_id}-->
-<!--    </delete>-->
 </mapper>

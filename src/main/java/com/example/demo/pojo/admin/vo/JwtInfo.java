@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -19,7 +20,7 @@ public class JwtInfo implements Serializable {
     private String adminName;
     private String adminAvatar;
 
-    private Set<SysRole> roles;
-    private Set<String> permissions;
+    private List<SysRole> roles;
+    private List<String> permissions;
 
 }

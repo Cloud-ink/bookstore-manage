@@ -21,6 +21,8 @@ public interface AdminMapper extends BaseMapper<Admin> {
     int deleteById(int id);
 
     //连表查询，查询用户的角色
-    Set<SysRole> selectRolesById(int id);
+    List<SysRole> selectRolesById(int id);
 
+    //连表查询，查询用户权限
+    List<String> selectPermission(List<Long> idList);
 }

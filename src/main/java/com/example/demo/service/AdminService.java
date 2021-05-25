@@ -6,6 +6,7 @@ import com.example.demo.pojo.system.SysRole;
 import com.example.demo.pojo.user.User;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -16,10 +17,6 @@ public interface AdminService extends IService<Admin> {
     boolean findAdmin(Admin admin);
 
     //根据用户id查询用户角色
-    Set<SysRole> selectRolesById(int id);
+    List<SysRole> selectRolesById(int id);
 
-    //根据用户id查询用户权限
-    Set<String> selectPermission(int id);
-
-    Set<Long> selectRolesId(Set<SysRole> roleSet);
 }

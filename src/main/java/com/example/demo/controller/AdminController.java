@@ -15,9 +15,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @ApiModel("管理员")
 @RestController
@@ -25,7 +24,6 @@ import java.util.Set;
 public class AdminController {
     @Autowired
     AdminService adminService;
-
     @Autowired
     SysRoleService sysRoleService;
 
@@ -37,20 +35,25 @@ public class AdminController {
 
         Admin admin = adminService.verity(adminVo);
         boolean result = adminService.findAdmin(adminVo);
-        Set<SysRole> roleSet = new HashSet<SysRole>();
-        roleSet = adminService.selectRolesById(admin.getId());
 
-        Set<Long> roleIdSole = adminService.selectRolesId(roleSet);
+        List<SysRole> roleSet = adminService.selectRolesById(admin.getId());
+        List<String> permission = null;
 
-        if(!CollectionUtils.isEmpty(roleSet)) {
-
+        if(!CollectionUtils.isEmpty(roleSet)){
+            List<Long> idList = new ArrayList<>();
+            for (SysRole sysRole:roleSet) {
+                idList.add(sysRole.getId());
+            }
+            permission = sysRoleService.selectPermission(idList);
         }
+
         if (result) {
             JwtInfo jwtInfo = new JwtInfo();
             jwtInfo.setId(admin.getId());
             jwtInfo.setAdminName(admin.getAdminName());
             jwtInfo.setAdminAvatar(admin.getAdminAvatar());
             jwtInfo.setRoles(roleSet);
+            jwtInfo.setPermissions(permission);
 
             String token = JwtUtil.getToken(jwtInfo);
             return R.ok().data("token", token).message("登录成功");

@@ -47,4 +47,11 @@
         INNER JOIN sys_role s ON r.role_id = s.id
         WHERE a.id = #{id}
     </select>
+
+    <select id="selectPermission" resultType="String">
+        SELECT s.id,s.code,s.name
+        FROM admin a INNER JOIN sys_role_admin r ON r.admin_id = a.id
+        INNER JOIN sys_role s ON r.role_id = s.id
+        WHERE a.id = #{id}
+    </select>
 </mapper>
