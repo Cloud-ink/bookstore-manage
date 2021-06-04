@@ -11,12 +11,15 @@ import java.util.Set;
 
 @Mapper
 public interface AdminMapper extends BaseMapper<Admin> {
+
     //用户名是否被注册
     boolean findUserName(String username);
+
     //注册
     boolean register(String user_name,String user_password);
+
     //根据用户名查找
-    User findUserByUserName(String user_name);
+    Admin findAdminByAdminName(String name);
 
     int deleteById(int id);
 

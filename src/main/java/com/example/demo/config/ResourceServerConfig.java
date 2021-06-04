@@ -11,8 +11,6 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 @EnableResourceServer
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Override

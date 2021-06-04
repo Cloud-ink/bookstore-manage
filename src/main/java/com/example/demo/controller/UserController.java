@@ -61,11 +61,7 @@ public class UserController {
     public R getUser(@ApiParam(value = "用户id", required = true)
                      @PathVariable int id) {
         User user = userService.getById(id);
-        if (user.equals(null)) {
-            return R.ok().message("未查找到用户");
-        } else {
-            return R.ok().message("查找成功").data("item", user);
-        }
+        return R.ok().message("查找成功").data("item", user);
     }
 
     @ApiOperation("更新用户信息")

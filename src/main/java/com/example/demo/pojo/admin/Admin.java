@@ -21,7 +21,7 @@ import java.sql.Timestamp;
 public class Admin implements Serializable {
 
     @TableId(value = "id",type= IdType.AUTO)
-    private int id;
+    private Integer id;
 
     @TableField(value = "admin_name")
     private String adminName;
@@ -42,7 +42,7 @@ public class Admin implements Serializable {
     private String type;
 
     @TableField(value = "admin_role")
-    private String adminRole;
+    private String role;
 
 
     @TableField(value = "create_time")

@@ -1,17 +1,12 @@
 package com.example.demo.util;
 
-import com.alibaba.fastjson.JSONArray;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.example.demo.pojo.admin.vo.JwtInfo;
-import com.example.demo.pojo.font.Collect;
+import com.example.demo.pojo.admin.vo.JwtAdminInfo;
 import com.example.demo.pojo.system.SysRole;
-import com.example.demo.service.AdminService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -26,6 +21,8 @@ public class JwtUtil {
 
     private static final String TOKEN_SECRET = "j0ijsdfjlsjfljfl15135313135";
 
+    private static final String ROLE_CLAIMS = "rol";
+
     //加密key
     public static Key getKetInstance() {
         //加密方式
@@ -37,7 +34,7 @@ public class JwtUtil {
     }
 
     //构建token
-    public static String getToken(JwtInfo jwtInfo) {
+    public static String createToken(JwtAdminInfo jwtAdminInfo) {
         //过期时间
         Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
         //私钥及加密算法
@@ -46,21 +43,24 @@ public class JwtUtil {
         HashMap<String, Object> header = new HashMap<>(2);
         header.put("typ", "JWT");
         header.put("alg", "HS256");
+        //设置role
+        HashMap<String, Object> map = new HashMap<>();
+        map.put(ROLE_CLAIMS, jwtAdminInfo.getRole());
         //附带username和userid生成签名
-        String JwtToken = Jwts.builder()
+        String token = Jwts.builder()
                 .setHeader(header)
                 .setSubject("manage")
                 .setIssuedAt(new Date())
                 .setExpiration(date)
-                .claim("id", jwtInfo.getId())
-                .claim("name", jwtInfo.getAdminName())
-                .claim("avatar", jwtInfo.getAdminAvatar())
-                .claim("roles", jwtInfo.getRoles())
-                .claim("permissions", jwtInfo.getPermissions())
+                .setClaims(map)
+                .claim("id", jwtAdminInfo.getId())
+                .claim("name", jwtAdminInfo.getAdminName())
+                .claim("avatar", jwtAdminInfo.getAdminAvatar())
+                .claim("permissions", jwtAdminInfo.getPermissions())
                 .signWith(SignatureAlgorithm.HS256, getKetInstance())
                 .compact();
 
-        return JwtToken;
+        return token;
     }
 
     //判断token是否存在有效
@@ -88,27 +88,28 @@ public class JwtUtil {
     }
 
     //解析jwt
-    public static JwtInfo getMemberIdByJwtToken(HttpServletRequest request) {
-        String token = request.getHeader("token");
-
-        if (StringUtils.isEmpty(token)) return null;
-
-        Jws<Claims> claimsJws = Jwts.parser()
-                .setSigningKey(getKetInstance())
-                .parseClaimsJws(token);//解析
-
-        Claims claims = claimsJws.getBody();
-
-        JwtInfo jwtInfo = new JwtInfo(
-                Integer.parseInt(claims.get("id").toString()),
-                claims.get("name").toString(),
-                claims.get("avatar").toString(),
-                (List<SysRole>) claims.get("roles"),
-                (List<String>) claims.get("permissions"));
-
-        return jwtInfo;
-
-    }
+//    public static JwtAdminInfo getMemberIdByJwtToken(HttpServletRequest request) {
+//        String token = request.getHeader("token");
+//
+//        if (StringUtils.isEmpty(token)) return null;
+//
+//        Jws<Claims> claimsJws = Jwts.parser()
+//                .setSigningKey(getKetInstance())
+//                .parseClaimsJws(token);//解析
+//
+//        Claims claims = claimsJws.getBody();
+//
+//        JwtAdminInfo jwtAdminInfo = new JwtAdminInfo(
+//                Integer.parseInt(claims.get("id").toString()),
+//                claims.get("name").toString(),
+//                claims.get("avatar").toString(),
+//                claims.get("role").toString(),
+//                (List<String>) claims.get("permissions"),
+//                Collection);
+//
+//        return jwtAdminInfo;
+//
+//    }
 
     public static String getType(Object object) {
         String typeName = object.getClass().getName();
@@ -116,4 +117,53 @@ public class JwtUtil {
         String type = typeName.substring(length + 1);
         return type;
     }
+
+    /**
+     * 获取用户信息
+     *
+     * @param token
+     * @return
+     */
+    public static JwtAdminInfo getAdmin(String token) {
+        Claims claims = Jwts.parser().setSigningKey(getKetInstance()).parseClaimsJws(token).getBody();
+
+        Integer id = Integer.parseInt(claims.get("id").toString());
+        String name = claims.get("name").toString();
+        String avatar = claims.get("avatar").toString();
+        String role = claims.get("rol").toString();
+
+        JwtAdminInfo jwtAdminInfo = new JwtAdminInfo();
+        jwtAdminInfo.setId(id);
+        jwtAdminInfo.setAdminName(name);
+        jwtAdminInfo.setAdminAvatar(avatar);
+        jwtAdminInfo.setRole(role);
+
+        return jwtAdminInfo;
+    }
+
+    public static String getAdminId(String token) {
+        Claims claims = Jwts.parser().setSigningKey(getKetInstance()).parseClaimsJws(token).getBody();
+        System.out.println(claims.get("name").toString());
+        return claims.get("name").toString();
+    }
+
+    public static String getAdminName(String token) {
+        Claims claims = Jwts.parser().setSigningKey(getKetInstance()).parseClaimsJws(token).getBody();
+        System.out.println(claims.get("id").toString());
+        return claims.get("id").toString();
+    }
+
+    public static String getAdminAvatar(String token) {
+        Claims claims = Jwts.parser().setSigningKey(getKetInstance()).parseClaimsJws(token).getBody();
+        System.out.println(claims.get("avatar").toString());
+        return claims.get("avatar").toString();
+    }
+
+    public static String getAdminRole(String token) {
+        Claims claims = Jwts.parser().setSigningKey(getKetInstance()).parseClaimsJws(token).getBody();
+        System.out.println(claims.get("rol").toString());
+        return claims.get("rol").toString();
+    }
+
+
 }

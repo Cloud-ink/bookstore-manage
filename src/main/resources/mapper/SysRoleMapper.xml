@@ -4,6 +4,14 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.SysRoleMapper">
 
+    <select id="findRoleByAdminId" resultType="SysRole">
+        SELECT *
+        FROM admin a
+        LEFT JOIN sys_role_admin sra ON a.id = sra.admin_id
+        LEFT JOIN sys_role sr ON sra.role_id = sr.id
+        WHERE a.id = #{id}
+    </select>
+
     <select id="selectPermission" resultType="String">
         SELECT sp.permission
         FROM sys_permission sp
